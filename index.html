@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="utf-8">
   
   <title>Feilio&#39;s Blog</title>
@@ -33,7 +33,7 @@
   
   <!-- 加载特效 -->
     <script src="/js/pace.js"></script>
-    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet" />
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet">
   <script>
       var feilioConfig = {
           rootUrl: '/',
@@ -47,7 +47,7 @@
           open_in_new: false
       }
   </script>
-</head>
+</head></html>
 <body>
   <div id="container">
     <div class="left-col">
@@ -208,14 +208,18 @@
       
           
         <h1 id="UNIX基础知识"><a href="#UNIX基础知识" class="headerlink" title="UNIX基础知识"></a>UNIX基础知识</h1><h2 id="一、UNIX-系统"><a href="#一、UNIX-系统" class="headerlink" title="一、UNIX 系统"></a>一、UNIX 系统</h2><ol>
-<li>UNIX内核的接口称之为系统调用，公有函数库构建在系统调用接口之上。应用程序既可以使用公有函数库，也可以使用系统调用。</li>
-<li>UNIX shell 是一个特殊的应用程序，它为其他应用程序提供了一个接口。</li>
-<li>路径名由一个斜线分割的一个或者多个文件名组成：<ul>
+<li><p>UNIX内核的接口称之为系统调用，公有函数库构建在系统调用接口之上。应用程序既可以使用公有函数库，也可以使用系统调用。</p>
+</li>
+<li><p>UNIX shell 是一个特殊的应用程序，它为其他应用程序提供了一个接口。</p>
+</li>
+<li><p>路径名由一个斜线分割的一个或者多个文件名组成：</p>
+<ul>
 <li>以斜线 <code>/</code> 开头的路径名称为绝对路径，其中 <code>/</code> 为根目录</li>
 <li>以 <code>.</code> 或 <code>..</code> 非斜线开头的路径名称为相对路径名<br>文件系统目录结构遵守 Filesystem Hirarchy Standard (FHS) 规定。</li>
 </ul>
 </li>
-<li>UINX 系统主要分为四大部分：文件管理、进程管理、设备管理以及内存管理。</li>
+<li><p>UINX 系统主要分为四大部分：文件管理、进程管理、设备管理以及内存管理。</p>
+</li>
 <li><p>查看 UNIX 系统 <code>ls</code> 命令的 <code>man</code> 帮助手册：<code>man 1 ls</code> 或者 <code>man -s1 ls</code></p>
 <ul>
 <li><code>1</code> : 可执行程序或者 <code>shell comand</code> 的说明</li>
@@ -234,18 +238,95 @@
 <p>修改 <code>/etc/passwd</code> 中对应的用户路径。</p>
 </blockquote>
 </li>
-<li>UNIX 系统中，每个进程都有惟一的数字标识符，记作 pid，范围为 0～65535。每个进程可拥有多个线程，线程标识符，记作 tgid ( thread group id) ，但是线程ID只有在它所属的进程内才有意义。</li>
+<li><p>UNIX 系统中，每个进程都有惟一的数字标识符，记作 pid，范围为 0～65535。每个进程可拥有多个线程，线程标识符，记作 tgid ( thread group id) ，但是线程ID只有在它所属的进程内才有意义。</p>
+</li>
 <li><p>文件或目录相关操作：</p>
-<p> | 文件操作 | 命令 |<br> | :–: | :–: |<br> | 基本操作 | ls, cd, mkdir, rmdir, touch, cp, rm, mv |<br> |  修改权限 | chmod, chown, umask,  |<br> | 获取文件内容 | cat, tac, more, less, head, tail, od |<br> | 文件搜索 | whereis, locate, find |</p>
+<table>
+<thead>
+<tr>
+<th align="center">文件操作</th>
+<th align="center">命令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">基本操作</td>
+<td align="center">ls, cd, mkdir, rmdir, touch, cp, rm, mv</td>
+</tr>
+<tr>
+<td align="center">修改权限</td>
+<td align="center">chmod, chown, umask,</td>
+</tr>
+<tr>
+<td align="center">获取文件内容</td>
+<td align="center">cat, tac, more, less, head, tail, od</td>
+</tr>
+<tr>
+<td align="center">文件搜索</td>
+<td align="center">whereis, locate, find</td>
+</tr>
+</tbody></table>
 </li>
 <li><p>进程相关操作：</p>
-<p>| 进程操作 | 命令或函数 |<br>| :–: | :–: |<br>| 进程信息 | ps, pstree, top, netstat |<br>| 进程控制 | fork(), wait(), waitpid(), exit，kill |<br>| 信息维护 | getpid(), getppid(), sleep, alarm() |<br>| 进程通信 | pipe(), shmget(), semget(), mkfifo(),msgget(), ipcs |</p>
+<table>
+<thead>
+<tr>
+<th align="center">进程操作</th>
+<th align="center">命令或函数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">进程信息</td>
+<td align="center">ps, pstree, top, netstat</td>
+</tr>
+<tr>
+<td align="center">进程控制</td>
+<td align="center">fork(), wait(), waitpid(), exit，kill</td>
+</tr>
+<tr>
+<td align="center">信息维护</td>
+<td align="center">getpid(), getppid(), sleep, alarm()</td>
+</tr>
+<tr>
+<td align="center">进程通信</td>
+<td align="center">pipe(), shmget(), semget(), mkfifo(),msgget(), ipcs</td>
+</tr>
+</tbody></table>
 </li>
 <li><p>设备管理：</p>
-<p>| 设备操作 | 命令或函数 |<br>| :–: | :–: |<br>| 设备信息 | lscpu, lshw, lnxi, df, free, dmidecode, hdparm|<br>| 字符设备 | read(), write(), ioctl(), lseek() |</p>
+<table>
+<thead>
+<tr>
+<th align="center">设备操作</th>
+<th align="center">命令或函数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">设备信息</td>
+<td align="center">lscpu, lshw, lnxi, df, free, dmidecode, hdparm</td>
+</tr>
+<tr>
+<td align="center">字符设备</td>
+<td align="center">read(), write(), ioctl(), lseek()</td>
+</tr>
+</tbody></table>
 </li>
 <li><p>内存管理:</p>
-<p>| 内存管理 | 命令或函数 |<br>| :–: | :–: |<br>| 内存控制 | mmap(), execve(), malloc(), free(), brk() |<br>| 泄漏调试 | readelf, nm, strip, strace, gdb, Valgrind |</p>
+<table>
+<thead>
+<tr>
+<th align="center">内存管理</th>
+<th align="center">命令或函数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">内存控制</td>
+<td align="center">mmap(), execve(), malloc(), free(), brk()</td>
+</tr>
+<tr>
+<td align="center">泄漏调试</td>
+<td align="center">readelf, nm, strip, strace, gdb, Valgrind</td>
+</tr>
+</tbody></table>
 </li>
 </ol>
 
@@ -281,7 +362,7 @@
     <div class="outer">
         <div id="footer-info">
             <div class="footer-left">
-                &copy; 2018 Feilio Chen
+                &copy; 2019 Feilio Chen
             </div>
         </div>
         
