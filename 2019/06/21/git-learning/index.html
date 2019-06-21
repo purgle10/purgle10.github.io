@@ -3,20 +3,26 @@
 <head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="utf-8">
   
-  <title>UNIX基础知识 | Feilio&#39;s Blog</title>
+  <title>Git 原理学习 | Feilio&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="1. UNIX内核的接口称之为系统调用，公有函数库构建在系统调用接口之上。应用程序既可以使用公有函数库，也可以使用系统调用。 2. UNIX shell 是一个特殊的应用程序，它为其他应用程序提供了一个接口。">
-<meta name="keywords" content="UNIX">
+  <meta name="description" content="本篇博客从底层介绍 git 的工作原理， git被 Linus 定义为 content tracker - 内容追踪者. 以及 git 目录存储对应的树型结构">
+<meta name="keywords" content="Git">
 <meta property="og:type" content="article">
-<meta property="og:title" content="UNIX基础知识">
-<meta property="og:url" content="https://github.com/purgle10/2018/08/29/unix-1/index.html">
+<meta property="og:title" content="Git 原理学习">
+<meta property="og:url" content="https://github.com/purgle10/2019/06/21/git-learning/index.html">
 <meta property="og:site_name" content="Feilio&#39;s Blog">
-<meta property="og:description" content="1. UNIX内核的接口称之为系统调用，公有函数库构建在系统调用接口之上。应用程序既可以使用公有函数库，也可以使用系统调用。 2. UNIX shell 是一个特殊的应用程序，它为其他应用程序提供了一个接口。">
+<meta property="og:description" content="本篇博客从底层介绍 git 的工作原理， git被 Linus 定义为 content tracker - 内容追踪者. 以及 git 目录存储对应的树型结构">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-06-17T16:34:19.136Z">
+<meta property="og:image" content="https://github.com/images/git-learning/treemodel.png">
+<meta property="og:image" content="https://github.com/images/git-learning/treenode.png">
+<meta property="og:image" content="https://github.com/images/git-learning/commitmodel.png">
+<meta property="og:image" content="https://github.com/images/git-learning/objectreference.png">
+<meta property="og:image" content="https://github.com/images/git-learning/multicommit.png">
+<meta property="og:updated_time" content="2019-06-21T12:59:10.781Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="UNIX基础知识">
-<meta name="twitter:description" content="1. UNIX内核的接口称之为系统调用，公有函数库构建在系统调用接口之上。应用程序既可以使用公有函数库，也可以使用系统调用。 2. UNIX shell 是一个特殊的应用程序，它为其他应用程序提供了一个接口。">
+<meta name="twitter:title" content="Git 原理学习">
+<meta name="twitter:description" content="本篇博客从底层介绍 git 的工作原理， git被 Linus 定义为 content tracker - 内容追踪者. 以及 git 目录存储对应的树型结构">
+<meta name="twitter:image" content="https://github.com/images/git-learning/treemodel.png">
   
     <link rel="alternative" href="/atom.xml" title="Feilio&#39;s Blog" type="application/atom+xml">
   
@@ -191,11 +197,11 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-unix-1" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-git-learning" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2018/08/29/unix-1/" class="article-date">
-      <time datetime="2018-08-29T07:02:38.000Z" itemprop="datePublished">2018-08-29</time>
+      <a href="/2019/06/21/git-learning/" class="article-date">
+      <time datetime="2019-06-21T12:43:38.000Z" itemprop="datePublished">2019-06-21</time>
 </a>
     </div>
   
@@ -208,7 +214,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      UNIX基础知识
+      Git 原理学习
     </h1>
   
 
@@ -219,7 +225,7 @@
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/UNIX/">UNIX</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Git/">Git</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -229,128 +235,24 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h2 id="一、UNIX-系统"><a href="#一、UNIX-系统" class="headerlink" title="一、UNIX 系统"></a>一、UNIX 系统</h2><ol>
-<li><p>UNIX内核的接口称之为系统调用，公有函数库构建在系统调用接口之上。应用程序既可以使用公有函数库，也可以使用系统调用。</p>
-</li>
-<li><p>UNIX shell 是一个特殊的应用程序，它为其他应用程序提供了一个接口。</p>
-</li>
-<li><p>路径名由一个斜线分割的一个或者多个文件名组成：</p>
-<ul>
-<li>以斜线 <code>/</code> 开头的路径名称为绝对路径，其中 <code>/</code> 为根目录</li>
-<li>以 <code>.</code> 或 <code>..</code> 非斜线开头的路径名称为相对路径名<br>文件系统目录结构遵守 Filesystem Hirarchy Standard (FHS) 规定。</li>
-</ul>
-</li>
-<li><p>UINX 系统主要分为四大部分：文件管理、进程管理、设备管理以及内存管理。</p>
-</li>
-<li><p>查看 UNIX 系统 <code>ls</code> 命令的 <code>man</code> 帮助手册：<code>man 1 ls</code> 或者 <code>man -s1 ls</code></p>
-<ul>
-<li><code>1</code> : 可执行程序或者 <code>shell comand</code> 的说明</li>
-<li><code>2</code> : 系统调用的说明</li>
-<li><code>3</code> : 库函数的说明</li>
-<li><code>4</code> : 特殊文件（通常位于<code>/dev/</code>）的说明</li>
-<li><code>5</code> : 配置文件</li>
-<li><code>8</code> : 系统管理员命令的说明<br>我们可以将 LINUX 操作系统中的 <code>man</code> 手册用中文的 <code>man</code> 代替。方法为（UBUNTU 操作系统下）：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install manpages-zh</span><br><span class="line">sudo vi /etc/manpath.config</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-</li>
-<li><p>每个进程都有一个工作目录，有时称他为当前工作目录，所有的相对路径名都是从当前工作目录开始解释。</p>
-</li>
-<li><p>登录时，<code>shell</code> 的工作目录设置为起始目录。</p>
+        <h2 id="Git-介绍"><a href="#Git-介绍" class="headerlink" title="Git 介绍"></a>Git 介绍</h2><p>Git被 Linus 定义为 content tracker - 内容追踪者.</p>
+<p>把一个项目建模为树型结构, 该树结构是存储着能完整还原目录和文件的一大堆内容和指向指针.</p>
 <blockquote>
-<p>修改 <code>/etc/passwd</code> 中对应的用户路径。</p>
+<p>a bunch of blobs of content and a collection of pointers that can be expanded back out into a full directory of files and subdirectories.  </p>
 </blockquote>
-</li>
-<li><p>UNIX 系统中，每个进程都有惟一的数字标识符，记作 pid，范围为 0～65535。每个进程可拥有多个线程，线程标识符，记作 tgid ( thread group id) ，但是线程ID只有在它所属的进程内才有意义。</p>
-</li>
-<li><p>文件或目录相关操作：</p>
-<table>
-<thead>
-<tr>
-<th align="center">文件操作</th>
-<th align="center">命令</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">基本操作</td>
-<td align="center">ls, cd, mkdir, rmdir, touch, cp, rm, mv</td>
-</tr>
-<tr>
-<td align="center">修改权限</td>
-<td align="center">chmod, chown, umask,</td>
-</tr>
-<tr>
-<td align="center">获取文件内容</td>
-<td align="center">cat, tac, more, less, head, tail, od</td>
-</tr>
-<tr>
-<td align="center">文件搜索</td>
-<td align="center">whereis, locate, find</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>进程相关操作：</p>
-<table>
-<thead>
-<tr>
-<th align="center">进程操作</th>
-<th align="center">命令或函数</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">进程信息</td>
-<td align="center">ps, pstree, top, netstat</td>
-</tr>
-<tr>
-<td align="center">进程控制</td>
-<td align="center">fork(), wait(), waitpid(), exit，kill</td>
-</tr>
-<tr>
-<td align="center">信息维护</td>
-<td align="center">getpid(), getppid(), sleep, alarm()</td>
-</tr>
-<tr>
-<td align="center">进程通信</td>
-<td align="center">pipe(), shmget(), semget(), mkfifo(),msgget(), ipcs</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>设备管理：</p>
-<table>
-<thead>
-<tr>
-<th align="center">设备操作</th>
-<th align="center">命令或函数</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">设备信息</td>
-<td align="center">lscpu, lshw, lnxi, df, free, dmidecode, hdparm</td>
-</tr>
-<tr>
-<td align="center">字符设备</td>
-<td align="center">read(), write(), ioctl(), lseek()</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>内存管理:</p>
-<table>
-<thead>
-<tr>
-<th align="center">内存管理</th>
-<th align="center">命令或函数</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">内存控制</td>
-<td align="center">mmap(), execve(), malloc(), free(), brk()</td>
-</tr>
-<tr>
-<td align="center">泄漏调试</td>
-<td align="center">readelf, nm, strip, strace, gdb, Valgrind</td>
-</tr>
-</tbody></table>
-</li>
-</ol>
+<p>git 适合非线性分布式开发的工作内容.</p>
+<p>git object type ( or git object database) 存储了 git 的真实数据. 保存在 git directory 中, 每个对象用zlib进行压缩, 且用内容的 SHA-1 摘要加上数据头进行索引.</p>
+<p>文件内容会被存储在 blob 中, 但是文件(即文件名和文件创建时间及权限)不会被存储. </p>
+<h2 id="Git-模型"><a href="#Git-模型" class="headerlink" title="Git 模型"></a>Git 模型</h2><p>git 目录存储对应的树型结构:<br><img src="/images/git-learning/treemodel.png" alt="树型结构"></p>
+<p>其中, 树节点中会保存目录下的文件和目录的模式, 类型, 摘要以及名字:<br><img src="/images/git-learning/treenode.png" alt="树节点"></p>
+<p>那么修改的历史又保存在哪呢?  答案是保存在 commit object 里, 一个 commit 指向一个 git directory, 同时包含作者, 提交者, 信息以及之前的 parent commits.<br><img src="/images/git-learning/commitmodel.png" alt="commitmodel"></p>
+<p>通常一个 commit 会仅有一个 parent, 但是如果我们合并了两个分支, 下一个 commit 就会指向两个 parent commit.</p>
+<p>git 的算法结构准确一点来说是有向无环图.</p>
+<p>分支其实就是 .git/refs/heads/ 目录下的一些文件, 模型看下图, HEAD就能区分当前是指向哪个分支:<br><img src="/images/git-learning/objectreference.png" alt="HEAD"></p>
+<p>灰色方块是指针, 有颜色圆角的是不变对象. 经过几次提交后, 可能变成:<br><img src="/images/git-learning/multicommit.png" alt="multicommit"></p>
+<p>从上图中, 我们可以轻易从最近的一次提交中还原到最开始的提交. 并且能够完美复原当时的文件内容和目录层次, 而且仅需存储16个不变, 签名, 压缩的对象.</p>
+<p>那么怎么来遍历?<br>需要 .git/refs 目录下保存各个分支或 tag 的最近一次提交. 然后就能完整遍历.<br>切换分支也很简单, 就是找到要切换分支的 commit, 然后恢复成当时的目录, 同时更新 HEAD 指向即可.<br>.git/index 文件保存着已修改但暂未提交的中间状态, 称作当前目录的缓存, 当运行 git commit 时, 新的树型结构和对象会根据 index 文件生成.</p>
+<p>参考: <a href="https://github.com/pluralsight/git-internals-pdf/releases/download/v2.0/peepcode-git.pdf">https://github.com/pluralsight/git-internals-pdf/releases/download/v2.0/peepcode-git.pdf</a></p>
 
       
       
@@ -406,13 +308,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2018/08/29/unix-1/">UNIX基础知识</a></p>
+        <p><span>本文标题:</span><a href="/2019/06/21/git-learning/">Git 原理学习</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Feilio Chen 的个人博客">Feilio Chen</a></p>
-        <p><span>发布时间:</span>2018年08月29日 - 15时02分</p>
-        <p><span>最后更新:</span>2019年06月18日 - 00时34分</p>
+        <p><span>发布时间:</span>2019年06月21日 - 20时43分</p>
+        <p><span>最后更新:</span>2019年06月21日 - 20时59分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2018/08/29/unix-1/" title="UNIX基础知识">https://github.com/purgle10/2018/08/29/unix-1/</a>
-            <span class="copy-path" data-clipboard-text="原文: https://github.com/purgle10/2018/08/29/unix-1/　　作者: Feilio Chen" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2019/06/21/git-learning/" title="Git 原理学习">https://github.com/purgle10/2019/06/21/git-learning/</a>
+            <span class="copy-path" data-clipboard-text="原文: https://github.com/purgle10/2019/06/21/git-learning/　　作者: Feilio Chen" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script src="/js/clipboard.min.js"></script>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
@@ -425,15 +327,11 @@
 
 <nav id="article-nav">
   
-    <a href="/2019/06/17/python-cplusplus-bind/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          Python调用C++封装的探索
-        
-      </div>
-    </a>
   
+    <a href="/2019/06/17/python-cplusplus-bind/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Python调用C++封装的探索</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
   
 </nav>
 
@@ -442,7 +340,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、UNIX-系统"><span class="toc-number">1.</span> <span class="toc-text">一、UNIX 系统</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-介绍"><span class="toc-number">1.</span> <span class="toc-text">Git 介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-模型"><span class="toc-number">2.</span> <span class="toc-text">Git 模型</span></a></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
 
@@ -496,13 +394,13 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2019/06/17/python-cplusplus-bind/" title="上一篇: Python调用C++封装的探索">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+            <a href="/2019/06/17/python-cplusplus-bind/" title="下一篇: Python调用C++封装的探索">
+                <i class="fa fa-angle-right"></i>
+            </a>
         
     </div>
     <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/06/21/git-learning/">Git 原理学习</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06/17/python-cplusplus-bind/">Python调用C++封装的探索</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/29/unix-1/">UNIX基础知识</a></li></ul>
